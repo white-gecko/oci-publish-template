@@ -1,3 +1,5 @@
+# https://github.com/white-gecko/oci-publish-template
+# v1
 name: OCI Publish
 
 on:
