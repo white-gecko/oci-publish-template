@@ -1,5 +1,5 @@
 # https://github.com/white-gecko/oci-publish-template
-# v2
+# v3
 name: OCI Publish
 
 on:
@@ -30,13 +30,13 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       # Install the cosign tool except on PR
       # https://github.com/sigstore/cosign-installer
       - name: Install cosign
         if: github.event_name != 'pull_request'
-        uses: sigstore/cosign-installer@v3
+        uses: sigstore/cosign-installer@v4
 
       # Set up BuildKit Docker container builder to be able to build
       # multi-platform images and export cache
