@@ -1,13 +1,14 @@
 # https://github.com/white-gecko/oci-publish-template
-# v4
+# v5
 name: OCI Publish
 
+# TODO: Adjust to your branch names
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "feature/*" ]
     tags: [ 'v*.*.*' ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "feature/*" ]
   workflow_dispatch:
 
 env:
@@ -16,11 +17,18 @@ env:
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
 
-
 jobs:
   build:
 
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        include:
+          # Add all Containerfiles/Dockerfiles as you need it
+          - containerfile: Containerfile
+            suffix: ""
+
     permissions:
       contents: read
       packages: write
@@ -61,6 +69,10 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          flavor: |
+            latest=auto
+            prefix=
+            suffix=${{ matrix.suffix }}
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
@@ -69,7 +81,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: Containerfile
+          file: ${{ matrix.containerfile }}
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
