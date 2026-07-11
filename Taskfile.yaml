@@ -1,0 +1,7 @@
+version: 3
+
+tasks:
+
+  ping-github-actions:
+    desc: Pin the github actions to hashes instead of tags
+    cmd: podman run --rm -v $(pwd):/workflows:z -e GITHUB_TOKEN docker.io/mheap/pin-github-action oci-publish.yml
